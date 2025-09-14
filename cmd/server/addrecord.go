@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-type recordJsonIn struct {
+type addRecordJsonReq struct {
 	Content string
 }
 
-type recordJsonOut struct {
+type addRecordJsonRes struct {
 	Id        int64     `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -21,7 +21,7 @@ var addRecord = middleware.Use(
 	func(w *middleware.ResponseWriter, r *middleware.Request) error {
 		decoder := json.NewDecoder(r.Http.Body)
 		decoder.DisallowUnknownFields()
-		recordJson := recordJsonIn{}
+		recordJson := addRecordJsonReq{}
 		err := decoder.Decode(&recordJson)
 		if err != nil {
 			w.AddLog("json decode error")
@@ -48,15 +48,17 @@ var addRecord = middleware.Use(
 			return err
 		}
 
-		responseObject := recordJsonOut{
+		responseObject := addRecordJsonRes{
 			Id:        record.Id,
 			CreatedAt: record.CreatedAt,
 		}
 		responseJson, _ := json.Marshal(responseObject)
 
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(responseJson)
 
 		return nil
 	},
+	middleware.RequireContentTypeJson,
 	middleware.BasicAuth,
 )

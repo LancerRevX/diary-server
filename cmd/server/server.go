@@ -1,9 +1,7 @@
 package main
 
 import (
-	"diary/internal/database"
 	"diary/internal/middleware"
-	"encoding/json"
 	"log"
 	"net/http"
 )
@@ -16,26 +14,19 @@ func notFound (w *middleware.ResponseWriter, r *middleware.Request) error {
 }
 var notFoundHandler = middleware.Use(notFound)
 
-var getRecords = middleware.Use(
-	func(w *middleware.ResponseWriter, r *middleware.Request) error {
-		records, err := database.GetRecords(r.User)
-		if err != nil {
-			return err
-		}
-		recordsJson, err := json.Marshal(records)
-		w.Write(recordsJson)
-		return nil
-	},
-	middleware.BasicAuth,
-)
+func createServeMux() *http.ServeMux {
+	serveMux := http.NewServeMux()
+	serveMux.HandleFunc("/", notFoundHandler)
+	serveMux.HandleFunc("GET /records", getRecords)
+	serveMux.HandleFunc("POST /records", addRecord)
+	serveMux.HandleFunc("DELETE /records/{id}", deleteRecord)
+	return serveMux
+}
 
 func main() {
-	http.HandleFunc("/", notFoundHandler)
-	http.HandleFunc("GET /records", getRecords)
-	http.HandleFunc("POST /records", addRecord)
-	http.HandleFunc("DELETE /records/{id}", deleteRecord)
+	serveMux := createServeMux()
 	log.Printf("Listening to http://%s...\n", addr)
-	err := http.ListenAndServe(addr, nil)
+	err := http.ListenAndServe(addr, serveMux)
 	if err != nil {
 		log.Fatalf("error listening: %s", err)
 	}

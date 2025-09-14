@@ -3,9 +3,9 @@ package database
 import "time"
 
 type Record struct {
-	Id        int64
-	Content   string
-	CreatedAt time.Time
+	Id        int64     `json:"id"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 func GetRecords(user *User) ([]Record, error) {

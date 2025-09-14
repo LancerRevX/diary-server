@@ -28,11 +28,7 @@ func Use(
 		for _, middleware := range middlewares {
 			continue_, err := middleware.Func(w, r)
 			if err != nil {
-				w.AddLog(fmt.Sprintf(
-					"error executing middleware \"%s\": %s",
-					middleware.Name,
-					err,
-				))
+				w.AddLog("error executing middleware \"%s\": %s", middleware.Name, err)
 				http.Error(
 					w,
 					http.StatusText(http.StatusInternalServerError),
