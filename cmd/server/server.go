@@ -23,6 +23,8 @@ func createServeMux() *http.ServeMux {
 	return serveMux
 }
 
+var corsMiddleware = middleware.AccessControlAllowOrigin("http://localhost:3000")
+
 func main() {
 	serveMux := createServeMux()
 	log.Printf("Listening to http://%s...\n", addr)

@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"diary/internal/database"
-	"fmt"
 	"net/http"
 )
 
 func sendUnauthorized(w http.ResponseWriter) {
+	// this header entry is needed for a browser basic auth popup
+	w.Header().Set("WWW-Authenticate", "Basic")
+	
 	http.Error(
 		w,
 		http.StatusText(http.StatusUnauthorized),
@@ -31,11 +33,7 @@ var BasicAuth = Middleware{
 		case database.ErrInvalidPassword:
 			fallthrough
 		case database.ErrUserNotFound:
-			w.AddLog(fmt.Sprintf(
-				"invalid user \"%s\" with password \"%s\"",
-				login,
-				password,
-			))
+			w.AddLog("invalid user \"%s\" with password \"%s\"",login,password)
 			sendUnauthorized(w)
 			return false, nil
 		default:

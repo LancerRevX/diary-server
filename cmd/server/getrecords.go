@@ -17,5 +17,6 @@ var getRecords = middleware.Use(
 		w.Write(recordsJson)
 		return nil
 	},
+	corsMiddleware,
 	middleware.BasicAuth,
 )
