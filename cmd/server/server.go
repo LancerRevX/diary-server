@@ -10,16 +10,15 @@ import (
 
 const addr = "localhost:8000"
 
-var notFound = middleware.With(
-	func(w *middleware.ResponseWriter, r *middleware.Request) error {
-		http.NotFound(w, r.Http)
-		return nil
-	},
-)
+func notFound (w *middleware.ResponseWriter, r *middleware.Request) error {
+	http.NotFound(w, r.Http)
+	return nil
+}
+var notFoundHandler = middleware.Use(notFound)
 
-var getRecords = middleware.With(
+var getRecords = middleware.Use(
 	func(w *middleware.ResponseWriter, r *middleware.Request) error {
-		records, err := database.GetRecordsForUser(r.User)
+		records, err := database.GetRecords(r.User)
 		if err != nil {
 			return err
 		}
@@ -31,8 +30,10 @@ var getRecords = middleware.With(
 )
 
 func main() {
-	http.HandleFunc("/", notFound)
+	http.HandleFunc("/", notFoundHandler)
 	http.HandleFunc("GET /records", getRecords)
+	http.HandleFunc("POST /records", addRecord)
+	http.HandleFunc("DELETE /records/{id}", deleteRecord)
 	log.Printf("Listening to http://%s...\n", addr)
 	err := http.ListenAndServe(addr, nil)
 	if err != nil {

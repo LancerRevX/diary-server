@@ -13,11 +13,11 @@ type ResponseWriter struct {
 	logMessage string
 }
 
-func (w *ResponseWriter) AddLog(text string) {
+func (w *ResponseWriter) AddLog(format string, a ...any) {
 	if w.logMessage != "" {
 		w.logMessage += ": "
 	}
-	w.logMessage += text
+	w.logMessage += fmt.Sprintf(format, a...)
 }
 
 func (w *ResponseWriter) Write(content []byte) (int, error) {

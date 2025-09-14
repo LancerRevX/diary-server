@@ -18,7 +18,7 @@ type Middleware struct {
 	Func func(w *ResponseWriter, r *Request) (bool, error)
 }
 
-func With(
+func Use(
 	handler HandlerFunc,
 	middlewares ...Middleware,
 ) http.HandlerFunc {
