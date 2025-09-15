@@ -6,6 +6,12 @@ var user *User = &User{Login: "nikita"}
 var createdRecordId int64
 
 func TestRecords(t *testing.T) {
+	err := Open()
+	if err != nil {
+		panic(err)
+	}
+	defer Close()
+
 	t.Run("create records", testCreateRecords)
 	t.Run("get records", testGetRecords)
 	t.Run("delete records", testDeleteRecord)

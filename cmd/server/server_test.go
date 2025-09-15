@@ -1,6 +1,7 @@
 package main
 
 import (
+	"diary/internal/database"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -24,6 +25,12 @@ func TestMain(m *testing.M) {
 	serveMux := createServeMux()
 	srv = httptest.NewServer(serveMux)
 	defer srv.Close()
+
+	err := database.Open()
+	if err != nil {
+		panic(err)
+	}
+	defer database.Close()
 
 	m.Run()
 }
