@@ -39,18 +39,3 @@ func ValidateCredentials(login string, password string) (*User, error) {
 	result := User{Login: login}
 	return &result, nil
 }
-
-func (user *User) HasRecord(id int64) (bool, error) {
-	row := db.QueryRow(
-		"SELECT EXISTS (SELECT 1 FROM records WHERE id = $1 AND user_login = $2)",
-		id,
-		user.Login,
-	)
-	var result bool
-	err := row.Scan(&result)
-	if err != nil {
-		return false, err
-	}
-
-	return result, nil
-}

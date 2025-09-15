@@ -12,10 +12,11 @@ func BenchmarkDatabase(b *testing.B) {
 	}
 	defer database.Close()
 
-	user := &database.User{Login: "nikita"}
+	const userId = 1
+
 	for b.Loop() {
-		record, _ := database.CreateRecord(user, "test record")
-		_, _ = database.GetRecords(user)
-		_ = database.DeleteRecord(record.Id)
+		recordId, _ := database.CreateRecord(userId, "test record", nil)
+		_, _ = database.GetRecords(userId)
+		_ = database.DeleteRecord(recordId)
 	}
 }

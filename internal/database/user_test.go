@@ -36,26 +36,4 @@ func TestAuthenticateUser(t *testing.T) {
 	}
 }
 
-func TestHasRecord(t *testing.T) {
-	user := &User{Login: "nikita"}
-	record, _ := CreateRecord(user, "test record")
-	t.Run("test has record", func(t *testing.T) {
-		result, err := user.HasRecord(record.Id)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !result {
-			t.Errorf("%v.HasRecord(%v) = false", user, record)
-		}
 
-		anotherUser := &User{Login: "test-user"}
-		result, err = anotherUser.HasRecord(record.Id)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if result {
-			t.Errorf("%v.HasRecord(%v) = true", anotherUser, record)
-		}
-	})
-	DeleteRecord(record.Id)
-}

@@ -8,7 +8,7 @@ import (
 
 var getRecords = middleware.Use(
 	func(w *middleware.ResponseWriter, r *middleware.Request) error {
-		records, err := database.GetRecords(r.User)
+		records, err := database.GetRecordsByUser(r.User)
 		if err != nil {
 			return err
 		}
