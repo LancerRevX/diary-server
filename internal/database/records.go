@@ -9,12 +9,6 @@ type Record struct {
 }
 
 func GetRecords(user *User) ([]Record, error) {
-	db, err := open()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-
 	rows, err := db.Query(
 		"SELECT id, content, created_at FROM records WHERE user_login = $1",
 		user.Login,
@@ -37,19 +31,13 @@ func GetRecords(user *User) ([]Record, error) {
 }
 
 func CreateRecord(user *User, content string) (*Record, error) {
-	db, err := open()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-
 	row := db.QueryRow(
 		"INSERT INTO records(user_login, content) VALUES ($1, $2) RETURNING id, content, created_at",
 		user.Login,
 		content,
 	)
 	record := &Record{}
-	err = row.Scan(&record.Id, &record.Content, &record.CreatedAt)
+	err := row.Scan(&record.Id, &record.Content, &record.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -58,13 +46,7 @@ func CreateRecord(user *User, content string) (*Record, error) {
 }
 
 func DeleteRecord(id int64) error {
-	db, err := open()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	_, err = db.Exec("DELETE FROM records WHERE id = $1", id)
+	_, err := db.Exec("DELETE FROM records WHERE id = $1", id)
 	if err != nil {
 		return err
 	}

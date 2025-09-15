@@ -1,6 +1,7 @@
 package main
 
 import (
+	"diary/internal/database"
 	"diary/internal/middleware"
 	"log"
 	"net/http"
@@ -26,9 +27,15 @@ func createServeMux() *http.ServeMux {
 var corsMiddleware = middleware.AccessControlAllowOrigin("http://localhost:3000")
 
 func main() {
+	err := database.Open()
+	if err != nil {
+		panic(err)
+	}
+	defer database.Close()
+
 	serveMux := createServeMux()
 	log.Printf("Listening to http://%s...\n", addr)
-	err := http.ListenAndServe(addr, serveMux)
+	err = http.ListenAndServe(addr, serveMux)
 	if err != nil {
 		log.Fatalf("error listening: %s", err)
 	}

@@ -2,14 +2,20 @@ package database
 
 import (
 	"database/sql"
+	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func open() (*sql.DB, error) {
-	databaseUrl := "postgres://nikita@localhost/diary"
-	db, err := sql.Open("pgx", databaseUrl)
-	return db, err
+var db *sql.DB
+
+func Open() error {
+	databaseUrl := os.Getenv("DATABASE_URL")
+	var err error
+	db, err = sql.Open("pgx", databaseUrl)
+	return err
 }
 
+func Close() {
 
+}
