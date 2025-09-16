@@ -1,6 +1,10 @@
 package database
 
-import "time"
+import (
+	"maps"
+	"slices"
+	"time"
+)
 
 type Record struct {
 	Id        int64     `json:"id"`
@@ -15,7 +19,7 @@ func GetRecordById(recordId int64) (*Record, error) {
 		recordId,
 	)
 	record := Record{}
-	err := row.Scan(&record)
+	err := row.Scan(&record.Id, &record.Content, &record.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -23,8 +27,22 @@ func GetRecordById(recordId int64) (*Record, error) {
 	return &record, nil
 }
 
-func GetRecords(userId int64) ([]Record, error) {
-	rows, err := db.Query(
+func GetRecordsByUser(userId int64) ([]*Record, error) {
+	rows, err := db.Query("SELECT id, name FROM tags")
+	if err != nil {
+		return nil, err
+	}
+	tags := map[int64]Tag{}
+	for rows.Next() {
+		tag := Tag{}
+		err = rows.Scan(&tag.Id, &tag.Name)
+		if err != nil {
+			return nil, err
+		}
+		tags[tag.Id] = tag
+	}
+
+	rows, err = db.Query(
 		"SELECT id, content, created_at FROM records WHERE user_id = $1",
 		userId,
 	)
@@ -32,18 +50,30 @@ func GetRecords(userId int64) ([]Record, error) {
 		return nil, err
 	}
 
-	result := []Record{}
+	records := map[int64]*Record{}
 	for rows.Next() {
-		record := Record{}
+		record := &Record{}
 		err = rows.Scan(&record.Id, &record.Content, &record.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, record)
+		records[record.Id] = record
 	}
 
+	rows, err = db.Query("SELECT tag_id, record_id FROM tag_to_record")
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var tagId, recordId int64
+		err = rows.Scan(&tagId, &recordId)
+		if err != nil {
+			return nil, err
+		}
+		records[recordId].Tags = append(records[recordId].Tags, tags[tagId])
+	}
 
-
+	result := slices.Collect(maps.Values(records))
 	return result, nil
 }
 
@@ -62,7 +92,7 @@ func CreateRecord(userId int64, content string, tagIds []int64) (recordId int64,
 	if err != nil {
 		return
 	}
-	
+
 	return
 }
 

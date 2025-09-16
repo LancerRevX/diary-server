@@ -4,7 +4,7 @@ import "net/http"
 
 var RequireContentTypeJson Middleware = Middleware{
 	Name: "Json",
-	Func: func(w *ResponseWriter, r *Request) (bool, error) {
+	Func: func(w *MyResponseWriter, r *MyRequest) (bool, error) {
 		contentType := r.Http.Header.Get("Content-Type")
 		if contentType != "application/json" {
 			w.AddLog("invalid content type: %s", contentType)

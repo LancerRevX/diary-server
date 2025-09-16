@@ -3,18 +3,18 @@ package main
 import (
 	"diary/internal/database"
 	"diary/internal/middleware"
-	"encoding/json"
 )
 
 var getRecords = middleware.Use(
-	func(w *middleware.ResponseWriter, r *middleware.Request) error {
-		records, err := database.GetRecordsByUser(r.User)
+	func(req *middleware.MyRequest, res *middleware.MyResponse) error {
+		records, err := database.GetRecordsByUser(req.User.Id)
 		if err != nil {
 			return err
 		}
-		recordsJson, _ := json.Marshal(records)
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(recordsJson)
+		err = res.Json(records)
+		if err != nil {
+			return err
+		}
 		return nil
 	},
 	corsMiddleware,

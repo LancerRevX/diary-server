@@ -52,6 +52,35 @@ FROM
 WHERE
     tags.name IN ('задачи', 'идеи');
 
+WITH
+    new_records AS (
+        INSERT INTO
+            records (user_id, content)
+        SELECT
+            users.id,
+            t.content
+        FROM
+            users,
+            (
+                VALUES
+                    ('Привет, Мир!')
+            ) AS t (content)
+        WHERE
+            login LIKE 'nikita'
+        RETURNING
+            id
+    )
+INSERT INTO
+    tag_to_record (tag_id, record_id)
+SELECT
+    tags.id,
+    new_records.id
+FROM
+    tags,
+    new_records
+WHERE
+    tags.name IN ('дневник');
+
 SELECT
     user_id,
     content,

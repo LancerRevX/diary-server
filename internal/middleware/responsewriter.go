@@ -6,21 +6,21 @@ import (
 	"net/http"
 )
 
-type ResponseWriter struct {
+type MyResponseWriter struct {
 	http       http.ResponseWriter
-	request    *Request
+	request    *MyRequest
 	statusCode int
 	logMessage string
 }
 
-func (w *ResponseWriter) AddLog(format string, a ...any) {
+func (w *MyResponseWriter) AddLog(format string, a ...any) {
 	if w.logMessage != "" {
 		w.logMessage += ": "
 	}
 	w.logMessage += fmt.Sprintf(format, a...)
 }
 
-func (w *ResponseWriter) Write(content []byte) (int, error) {
+func (w *MyResponseWriter) Write(content []byte) (int, error) {
 	result, err := w.http.Write(content)
 
 	responseText := string(content)
@@ -48,11 +48,11 @@ func (w *ResponseWriter) Write(content []byte) (int, error) {
 	return result, err
 }
 
-func (w *ResponseWriter) WriteHeader(statusCode int) {
+func (w *MyResponseWriter) WriteHeader(statusCode int) {
 	w.statusCode = statusCode
 	w.http.WriteHeader(statusCode)
 }
 
-func (w *ResponseWriter) Header() http.Header {
+func (w *MyResponseWriter) Header() http.Header {
 	return w.http.Header()
 }

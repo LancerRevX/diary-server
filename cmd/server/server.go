@@ -9,10 +9,11 @@ import (
 
 const addr = "localhost:8000"
 
-func notFound (w *middleware.ResponseWriter, r *middleware.Request) error {
+func notFound(w *middleware.MyResponseWriter, r *middleware.MyRequest) error {
 	http.NotFound(w, r.Http)
 	return nil
 }
+
 var notFoundHandler = middleware.Use(notFound)
 
 func createServeMux() *http.ServeMux {

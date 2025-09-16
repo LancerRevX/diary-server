@@ -8,6 +8,7 @@ import (
 )
 
 type User struct {
+	Id    int64
 	Login string
 }
 
@@ -15,12 +16,14 @@ var ErrUserNotFound = errors.New("user not found")
 var ErrInvalidPassword = errors.New("invalid password")
 
 func ValidateCredentials(login string, password string) (*User, error) {
+	user := User{Login: login}
+
 	row := db.QueryRow(
-		"SELECT password_hash FROM users WHERE login = $1",
+		"SELECT id, password_hash FROM users WHERE login = $1",
 		login,
 	)
 	var dbPasswordHash string
-	err := row.Scan(&dbPasswordHash)
+	err := row.Scan(&user.Id, &dbPasswordHash)
 	switch err {
 	case nil:
 		break
@@ -36,6 +39,5 @@ func ValidateCredentials(login string, password string) (*User, error) {
 		return nil, ErrInvalidPassword
 	}
 
-	result := User{Login: login}
-	return &result, nil
+	return &user, nil
 }

@@ -8,7 +8,7 @@ import (
 )
 
 var deleteRecord = middleware.Use(
-	func(w *middleware.ResponseWriter, r *middleware.Request) error {
+	func(w *middleware.MyResponseWriter, r *middleware.MyRequest) error {
 		recordId, err := strconv.ParseInt(r.Http.PathValue("id"), 10, 64)
 		if err != nil {
 			w.AddLog("invalid path parameter: %s", r.Http.PathValue("id"))

@@ -38,7 +38,7 @@ func TestCreateRecords(t *testing.T) {
 }
 
 func TestGetRecords(t *testing.T) {
-	records, err := GetRecords(userId)
+	records, err := GetRecordsByUser(userId)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,6 +47,12 @@ func TestGetRecords(t *testing.T) {
 	}
 	if len(records) < 1 {
 		t.Errorf("len(records) = %d; want > 1", len(records))
+	}
+
+	for _, record := range records {
+		if record.Content == "" {
+			t.Errorf(`record.Content == ""`)
+		}
 	}
 }
 
@@ -80,7 +86,7 @@ func TestDeleteRecord(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	records, _ := GetRecords(userId)
+	records, _ := GetRecordsByUser(userId)
 	for _, record := range records {
 		if record.Id == createdRecordId {
 			t.Errorf("record with id = %d not deleted", createdRecordId)

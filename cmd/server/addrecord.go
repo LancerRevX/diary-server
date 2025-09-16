@@ -18,20 +18,8 @@ type addRecordJsonRes struct {
 }
 
 var addRecord = middleware.Use(
-	func(w *middleware.ResponseWriter, r *middleware.Request) error {
-		decoder := json.NewDecoder(r.Http.Body)
-		decoder.DisallowUnknownFields()
-		recordJson := addRecordJsonReq{}
-		err := decoder.Decode(&recordJson)
-		if err != nil {
-			w.AddLog("json decode error")
-			http.Error(
-				w,
-				http.StatusText(http.StatusBadRequest),
-				http.StatusBadRequest,
-			)
-			return nil
-		}
+	func(req *middleware.MyRequest, res *middleware.MyResponse) error {
+		
 
 		if recordJson.Content == "" {
 			w.AddLog("empty content")

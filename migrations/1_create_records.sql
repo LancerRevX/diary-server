@@ -7,18 +7,6 @@ CREATE TABLE records (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-INSERT INTO
-    records (user_id, content)
-SELECT
-    users.id,
-    'Hello, World!'
-FROM
-    users
-WHERE
-    login LIKE 'nikita'
-LIMIT
-    1;
-
 SELECT
     *
 FROM

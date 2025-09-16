@@ -16,7 +16,7 @@ func BenchmarkDatabase(b *testing.B) {
 
 	for b.Loop() {
 		recordId, _ := database.CreateRecord(userId, "test record", nil)
-		_, _ = database.GetRecords(userId)
+		_, _ = database.GetRecordsByUser(userId)
 		_ = database.DeleteRecord(recordId)
 	}
 }
